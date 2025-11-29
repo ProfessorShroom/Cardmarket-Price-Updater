@@ -1,13 +1,15 @@
-﻿using System;
+﻿using OfficeOpenXml;               // EPPlus
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Net.Http;
+using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OfficeOpenXml;               // EPPlus
 
 namespace CardPriceUpdaterGui
 {
@@ -31,19 +33,25 @@ namespace CardPriceUpdaterGui
             outputBox.Font = new System.Drawing.Font("Consolas", 10);
             outputBox.ReadOnly = true;
 
-            // If you use radio buttons, default GBP
-            try
+            // Show version link at bottom of GUI
+            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "Unknown";
+            var versionLabel = new LinkLabel()
             {
-                if (this.Controls.ContainsKey("rbGbp"))
-                {
-                    var rb = this.Controls["rbGbp"] as RadioButton;
-                    if (rb != null) rb.Checked = true;
-                }
-            }
-            catch { /* ignore if designer doesn't have them */ }
+                Text = $"Version {version}",
+                AutoSize = true,
+                Left = 10,
+                Top = this.ClientSize.Height - 25,
+                LinkColor = System.Drawing.Color.Black
+            };
+            versionLabel.Click += (_, __) => System.Diagnostics.Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/ProfessorShroom/Cardmarket-Price-Updater/blob/main/README.md",
+                UseShellExecute = true
+            });
+            this.Controls.Add(versionLabel);
         }
 
-        private async void StartButton_Click(object sender, EventArgs e)
+        private async void StartButton_Click(object? sender, EventArgs e)
         {
             using var dlg = new OpenFileDialog()
             {
@@ -90,7 +98,7 @@ namespace CardPriceUpdaterGui
 
             using var http = new HttpClient() { Timeout = TimeSpan.FromSeconds(30) };
 
-            // Download price guides (1,2,3)
+            // Download price guides (1,3,6)
             AppendLog("Downloading Cardmarket price guides (MTG, Yu-Gi-Oh!, Pokémon)...");
             JsonDocument[] priceDocs = Array.Empty<JsonDocument>();
             try
@@ -112,11 +120,9 @@ namespace CardPriceUpdaterGui
             }
             finally
             {
-                // Dispose the JsonDocument instances
                 foreach (var d in priceDocs) d?.Dispose();
             }
 
-            // Fetch FX
             AppendLog("Fetching EUR->GBP rate...");
             decimal fx = await GetEurToGbpRateAsync(http);
             AppendLog($"FX: 1 EUR = {fx.ToString(CultureInfo.InvariantCulture)} GBP");
@@ -128,25 +134,24 @@ namespace CardPriceUpdaterGui
             var sw = Stopwatch.StartNew();
             try
             {
-                // Set EPPlus license for non-commercial usage (your working approach)
                 OfficeOpenXml.ExcelPackage.License.SetNonCommercialPersonal("ProfessorShroom");
 
                 using var package = new ExcelPackage(new FileInfo(tempPath));
-                var ws = package.Workbook.Worksheets[0] as OfficeOpenXml.ExcelWorksheet;
+                var ws = package.Workbook.Worksheets[0] as ExcelWorksheet;
                 if (ws == null)
                 {
                     AppendLog("No worksheet found in workbook.");
                     return;
                 }
 
-                var (headerRow, priceCol, tsCol, pidCol) = FindHeaderRowAndCols(ws);
-                if (headerRow == -1 || priceCol == -1 || tsCol == -1 || pidCol == -1)
+                var (headerRow, priceCol, tsCol, pidCol, gameCol) = FindHeaderRowAndCols(ws);
+                if (headerRow == -1 || priceCol == -1 || tsCol == -1 || pidCol == -1 || gameCol == -1)
                 {
-                    AppendLog("Couldn't find required columns (Card Price, Price Updated, Cardmarket ID).");
+                    AppendLog("Couldn't find required columns (Card Price, Price Updated, Cardmarket ID, Game).");
                     return;
                 }
 
-                AppendLog($"Using header row {headerRow} (price col {priceCol}, ts col {tsCol}, pid col {pidCol})");
+                AppendLog($"Using header row {headerRow} (price col {priceCol}, ts col {tsCol}, pid col {pidCol}, game col {gameCol})");
 
                 int updatedRows = 0, skippedRows = 0;
                 string dateStr = DateTime.Now.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
@@ -158,44 +163,52 @@ namespace CardPriceUpdaterGui
                 for (int row = headerRow + 1; row <= lastRow; row++)
                 {
                     progressCounter++;
-                    if ((progressCounter % 500) == 0)
-                        AppendLog($"Processed {progressCounter} rows. Elapsed: {sw.Elapsed.TotalSeconds:N1}s");
 
-                    var pidVal = ws.Cells[row, pidCol].Text.Trim();
-                    if (string.IsNullOrEmpty(pidVal) || !int.TryParse(pidVal, NumberStyles.Integer, CultureInfo.InvariantCulture, out int pid))
+                    var pidText = ws.Cells[row, pidCol].Text.Trim();
+                    var gameText = ws.Cells[row, gameCol].Text.Trim().ToLowerInvariant();
+
+                    // Skip empty rows
+                    if (string.IsNullOrEmpty(pidText) && string.IsNullOrEmpty(gameText))
+                        continue;
+
+                    // Normalize game text: remove punctuation/accents
+                    string cleanGame = Regex.Replace(gameText.Normalize(NormalizationForm.FormD), @"[^a-z0-9]", "");
+
+                    int guideIndex = cleanGame switch
+                    {
+                        "mtg" => 0,
+                        "yugioh" => 1,
+                        "pokemon" => 2,
+                        _ => -1
+                    };
+
+                    if (guideIndex == -1)
                     {
                         skippedRows++;
+                        AppendLog($"Row {row}: unknown game '{gameText}', skipped.");
+                        continue;
+                    }
+
+                    if (!int.TryParse(pidText, NumberStyles.Integer, CultureInfo.InvariantCulture, out int pid))
+                    {
+                        skippedRows++;
+                        AppendLog($"Row {row}: invalid Cardmarket ID, skipped.");
                         continue;
                     }
 
                     if (!priceMap.TryGetValue(pid, out decimal priceEur))
                     {
                         skippedRows++;
+                        AppendLog($"Row {row}: price not found for product ID {pid}, skipped.");
                         continue;
                     }
 
-                    // Determine selected currency:
                     bool useGbp = true;
-                    // Prefer radio buttons if present
                     var rbGbp = this.Controls.ContainsKey("rbGbp") ? this.Controls["rbGbp"] as RadioButton : null;
                     var rbEur = this.Controls.ContainsKey("rbEur") ? this.Controls["rbEur"] as RadioButton : null;
                     if (rbGbp != null && rbEur != null)
                     {
                         useGbp = rbGbp.Checked;
-                    }
-                    else
-                    {
-                        // Fallback: if a combo exists named currencyComboBox use it; else default GBP
-                        if (this.Controls.ContainsKey("currencyComboBox"))
-                        {
-                            var cb = this.Controls["currencyComboBox"] as ComboBox;
-                            if (cb != null && cb.SelectedItem != null)
-                            {
-                                useGbp = cb.SelectedItem.ToString().StartsWith("G", StringComparison.InvariantCultureIgnoreCase) ||
-                                         cb.SelectedItem.ToString().Contains("GBP") ||
-                                         cb.SelectedItem.ToString().Contains("£");
-                            }
-                        }
                     }
 
                     decimal priceValue;
@@ -211,29 +224,27 @@ namespace CardPriceUpdaterGui
                         currencyFormat = "€#,##0.00";
                     }
 
-                    // Write price and preserve workbook formatting otherwise
                     ws.Cells[row, priceCol].Value = priceValue;
                     ws.Cells[row, priceCol].Style.Numberformat.Format = currencyFormat;
-
                     ws.Cells[row, tsCol].Value = dateStr;
 
                     updatedRows++;
+                    if ((progressCounter % 500) == 0)
+                        AppendLog($"Processed {progressCounter} rows. Elapsed: {sw.Elapsed.TotalSeconds:N1}s");
                 }
 
                 AppendLog($"Finished processing rows in {sw.Elapsed.TotalSeconds:N2}s. Updated {updatedRows}, skipped {skippedRows}.");
 
                 AppendLog("Saving updated workbook...");
-                package.Save(); // EPPlus will preserve formatting and CF
+                package.Save();
                 AppendLog("Workbook saved successfully.");
 
-                // Replace original
                 File.Copy(tempPath, workbookPath, true);
                 AppendLog("Original workbook replaced.");
             }
             catch (Exception ex)
             {
                 AppendLog($"Failed during workbook update: {ex.Message}");
-                AppendLog(ex.ToString());
             }
             finally
             {
@@ -252,17 +263,11 @@ namespace CardPriceUpdaterGui
             }
         }
 
-        /// <summary>
-        /// Download multiple price guide URLs in parallel and return parsed JsonDocuments.
-        /// </summary>
         private async Task<JsonDocument[]> DownloadPriceGuidesAsync(HttpClient http, string[] urls)
         {
             var downloadTasks = new List<Task<(string url, string content)>>();
             foreach (var url in urls)
-            {
-                // Launch each GET in its own task to allow parallel downloads
                 downloadTasks.Add(Task.Run(async () => (url, await http.GetStringAsync(url))));
-            }
 
             var results = await Task.WhenAll(downloadTasks);
 
@@ -271,24 +276,18 @@ namespace CardPriceUpdaterGui
             {
                 try
                 {
-                    var doc = JsonDocument.Parse(r.content);
-                    docs.Add(doc);
+                    docs.Add(JsonDocument.Parse(r.content));
                     AppendLog($"Parsed price guide from {r.url}");
                 }
                 catch (Exception ex)
                 {
                     AppendLog($"Failed to parse JSON from {r.url}: {ex.Message}");
-                    // continue - we just skip malformed docs
                 }
             }
 
             return docs.ToArray();
         }
 
-        /// <summary>
-        /// Build a single price map from one-or-more JsonDocument price guide files.
-        /// Later documents overwrite earlier entries by default.
-        /// </summary>
         private Dictionary<int, decimal> BuildPriceMap(JsonDocument[] docs)
         {
             var map = new Dictionary<int, decimal>();
@@ -323,7 +322,6 @@ namespace CardPriceUpdaterGui
                     };
                     if (trend == -1) { skipped++; continue; }
 
-                    // Insert/overwrite so later docs win
                     map[pid] = trend;
                 }
             }
@@ -354,31 +352,32 @@ namespace CardPriceUpdaterGui
             return 0.85m;
         }
 
-        private (int headerRow, int priceCol, int tsCol, int pidCol) FindHeaderRowAndCols(OfficeOpenXml.ExcelWorksheet ws)
+        private (int headerRow, int priceCol, int tsCol, int pidCol, int gameCol) FindHeaderRowAndCols(ExcelWorksheet ws)
         {
-            int headerRow = -1, priceCol = -1, tsCol = -1, pidCol = -1;
+            int headerRow = -1, priceCol = -1, tsCol = -1, pidCol = -1, gameCol = -1;
             int maxRow = Math.Min(MAX_HEADER_SCAN_ROWS, ws.Dimension?.End.Row ?? 0);
             int maxCol = ws.Dimension?.End.Column ?? 0;
 
             for (int r = 1; r <= maxRow; r++)
             {
-                int _price = -1, _ts = -1, _pid = -1;
+                int _price = -1, _ts = -1, _pid = -1, _game = -1;
                 for (int c = 1; c <= maxCol; c++)
                 {
                     string hdr = (ws.Cells[r, c].Text ?? string.Empty).Trim().ToLowerInvariant();
                     if (hdr.Contains("card price") && hdr.Contains("£")) _price = c;
                     else if (hdr.Contains("price updated")) _ts = c;
                     else if (hdr.Contains("cardmarket id")) _pid = c;
+                    else if (hdr.Contains("game")) _game = c;
                 }
 
-                if (_pid != -1 && (_price != -1 || _ts != -1))
+                if (_pid != -1 && (_price != -1 || _ts != -1) && _game != -1)
                 {
-                    headerRow = r; priceCol = _price; tsCol = _ts; pidCol = _pid;
+                    headerRow = r; priceCol = _price; tsCol = _ts; pidCol = _pid; gameCol = _game;
                     break;
                 }
             }
 
-            return (headerRow, priceCol, tsCol, pidCol);
+            return (headerRow, priceCol, tsCol, pidCol, gameCol);
         }
     }
 }

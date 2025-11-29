@@ -29,7 +29,7 @@
             startButton.Name = "startButton";
             startButton.Size = new Size(150, 35);
             startButton.TabIndex = 0;
-            startButton.Text = "Get Prices";
+            startButton.Text = "Get Prices (Select File...)";
             startButton.UseVisualStyleBackColor = true;
             // 
             // outputBox
@@ -38,13 +38,14 @@
             outputBox.Multiline = true;
             outputBox.Name = "outputBox";
             outputBox.ScrollBars = ScrollBars.Vertical;
-            outputBox.Size = new Size(760, 380);
+            outputBox.Size = new Size(760, 367);
             outputBox.TabIndex = 1;
             // 
             // checkBoxGBP
             // 
             checkBoxGBP.Appearance = Appearance.Button;
             checkBoxGBP.AutoSize = true;
+            checkBoxGBP.Checked = true;
             checkBoxGBP.Location = new Point(168, 17);
             checkBoxGBP.Name = "checkBoxGBP";
             checkBoxGBP.Size = new Size(23, 25);
@@ -52,7 +53,6 @@
             checkBoxGBP.TabStop = true;
             checkBoxGBP.Text = "£";
             checkBoxGBP.UseVisualStyleBackColor = true;
-            checkBoxGBP.Checked = true;
             // 
             // checkBoxEUR
             // 
@@ -75,11 +75,11 @@
             Controls.Add(checkBoxGBP);
             Controls.Add(outputBox);
             Controls.Add(startButton);
+            Icon = Cardmarket_Price_Updater.Properties.Resources.CardmarketPriceUpdaterLogo;
             Name = "CardmarketPriceUpdater";
             Text = "Cardmarket Price Updater";
             ResumeLayout(false);
             PerformLayout();
-            this.Icon = global::Cardmarket_Price_Updater.Properties.Resources.CardmarketPriceUpdaterLogo;
 
         }
 
