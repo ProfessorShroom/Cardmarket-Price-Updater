@@ -45,7 +45,7 @@ namespace CardPriceUpdaterGui
             };
             versionLabel.Click += (_, __) => System.Diagnostics.Process.Start(new ProcessStartInfo
             {
-                FileName = "https://github.com/ProfessorShroom/Cardmarket-Price-Updater/blob/main/README.md",
+                FileName = "https://professorshroom.com/projects/Cardmarket_Price_Updater/#changelog",
                 UseShellExecute = true
             });
             this.Controls.Add(versionLabel);

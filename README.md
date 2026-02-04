@@ -52,10 +52,13 @@ Own? and Bought For are only required if you want to use the collection value pa
 
 #### Latest Update
 
-**Update 1.1.0.0**
+**Update 1.1.1.0**
 
-Added Game to spreadsheet to specify the card game.
-
-Will now check prices against the correct game instead of checking all.
+- Moved Version/Readme link to [professorshroom.com](https://professorshroom.com)
 
 #### Older Updates
+
+**Update 1.1.0.0**
+
+- Added Game to spreadsheet to specify the card game.
+- Will now check prices against the correct game instead of checking all.
