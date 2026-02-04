@@ -50,12 +50,12 @@ Own? and Bought For are only required if you want to use the collection value pa
 
 #### Changelog
 
-#### Update 1.1.0.0
+#### Latest Update
+
+**Update 1.1.0.0**
 
 Added Game to spreadsheet to specify the card game.
 
 Will now check prices against the correct game instead of checking all.
 
-#### Update 1.0.0.0
-
-Initial commit.
+#### Older Updates
