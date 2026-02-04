@@ -1,7 +1,7 @@
 ﻿﻿ ![Arch](https://img.shields.io/badge/Arch-AMD64-blue) ![OS](https://img.shields.io/badge/OS-Windows%2010%20|%20Windows%2011-green)
 
 ## Cardmarket Price Updater
-###### Copyright © Charlie Howard 2025. All rights reserved.
+#### Copyright © Charlie Howard 2025. All rights reserved.
 
 A C# based GUI that gets prices from [Cardmarket](https://www.cardmarket.com/en) based on spreadsheet contents for collection value purposes in either GBP (£) or EUR (€).
 
