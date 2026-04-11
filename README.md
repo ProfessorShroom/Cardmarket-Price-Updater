@@ -1,7 +1,7 @@
 ﻿﻿ ![Arch](https://img.shields.io/badge/Arch-AMD64-blue) ![OS](https://img.shields.io/badge/OS-Windows%2010%20|%20Windows%2011-green)
 
 ## Cardmarket Price Updater
-#### Copyright © Charlie Howard 2025. All rights reserved.
+#### Copyright © Charlie Howard 2026. All rights reserved.
 
 A C# based GUI that gets prices from [Cardmarket](https://www.cardmarket.com/en) based on spreadsheet contents for collection value purposes in either GBP (£) or EUR (€).
 
@@ -42,20 +42,25 @@ Own? and Bought For are only required if you want to use the collection value pa
 
 | Release Date | Game      | Set Name                           | Card Name              | Set Code   | Card Price (£) | Price Updated | Cardmarket ID | Rarity                | Own? | Edition | Bought For (£) | Collection Value (£)              | Remaing Cards | Total Cards |
 | ------------ | --------- | ---------------------------------- | ---------------------- | ---------- | -------------- | ------------- | ------------- | --------------------- | ---- | ------- | -------------- | --------------------------------- | ------------- | ----------- |
-| 12/09/2025   | Yu-Gi-Oh! | Nike Collaboration Cards (special) | Red-Eyes Black Dragon  | NKC1-EN002 | £237.33        | 2026-03-20    | 845882        | Prismatic Secret Rare | ✔    | LIMITED | £200.00        | £28,082.23                        | 1             | 4           |
-| 08/03/2002   | Yu-Gi-Oh! | Legend of Blue-Eyes White Dragon   | Blue-Eyes White Dragon | LOB-001    | £158.11        | 2026-03-20    | 577919        | Ultra Rare            | ✖    | ✖       |                | Amount Spent (£)                  |               |             |
-| 05/08/1993   | MTG       | Alpha                              | Black Lotus            |            | £26,328.87     | 2026-03-20    | 5465          | Rare                  | ✔    | ✔       | £20,000.00     | £22,250.00                        |               |             |
-| 09/01/1999   | Pokémon   | Base Set                           | Charizard              | BS 4       | £1,248.46      | 2026-03-20    | 660224        | Holo Rare             | ✔    | PSA9    | £2,000.00      | Amount to Complete Collection (£) |               |             |
-| 2008-11-18   | Yu-Gi-Oh! | Crossroads of Chaos                | Black Rose Dragon      | CSOC-EN039 | £267.57        | 2026-03-20    | 108490        |                       | ✔    | PSA10   | £50.00         | £158.11                           |               |             |
+| 12/09/2025   | Yu-Gi-Oh! | Nike Collaboration Cards (special) | Red-Eyes Black Dragon  | NKC1-EN002 | £243.21        | 2026-04-11    | 845882        | Prismatic Secret Rare | ✔    | LIMITED | £200.00        | £28,082.23                        | 1             | 4           |
+| 08/03/2002   | Yu-Gi-Oh! | Legend of Blue-Eyes White Dragon   | Blue-Eyes White Dragon | LOB-001    | £116.06        | 2026-04-11    | 577919        | Ultra Rare            | ✖    | ✖       |                | Amount Spent (£)                  |               |             |
+| 05/08/1993   | MTG       | Alpha                              | Black Lotus            |            | £26,980.90     | 2026-04-11    | 5465          | Rare                  | ✔    | ✔       | £20,000.00     | £22,250.00                        |               |             |
+| 09/01/1999   | Pokémon   | Base Set                           | Charizard              | BS 4       | £1,351.48      | 2026-04-11    | 660224        | Holo Rare             | ✔    | PSA9    | £2,000.00      | Amount to Complete Collection (£) |               |             |
+| 2008-11-18   | Yu-Gi-Oh! | Crossroads of Chaos                | Black Rose Dragon      | CSOC-EN039 | £224.36        | 2026-04-11    | 108490        |                       | ✔    | PSA10   | £50.00         | £158.11                           |               |             |
+
 #### Changelog
 
 #### Latest Update
 
+**Update 1.1.2.0**
+
+- Updated EUR to GBP conversion link.
+
+#### Older Updates
+
 **Update 1.1.1.0**
 
 - Moved Version/Readme link to [professorshroom.com](https://professorshroom.com)
-
-#### Older Updates
 
 **Update 1.1.0.0**
 

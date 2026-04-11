@@ -22,10 +22,8 @@ namespace CardPriceUpdaterGui
             "https://downloads.s3.cardmarket.com/productCatalog/priceGuide/price_guide_3.json",
             "https://downloads.s3.cardmarket.com/productCatalog/priceGuide/price_guide_6.json"
         };
-
-        private const string FX_API_URL = "https://api.exchangerate.host/latest?base=EUR&symbols=GBP";
+        private const string FX_API_URL = "https://api.frankfurter.app/latest?from=EUR&to=GBP";
         private const int MAX_HEADER_SCAN_ROWS = 20;
-
         public CardmarketPriceUpdater()
         {
             InitializeComponent();
