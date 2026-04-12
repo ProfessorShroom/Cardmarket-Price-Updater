@@ -1,11 +1,13 @@
-﻿namespace CardPriceUpdaterGui
+﻿
+// Copyright © Charlie Howard 2026 All rights reserved.
+
+namespace CardPriceUpdaterGui
 {
     partial class CardmarketPriceUpdater
     {
         private System.ComponentModel.IContainer components = null;
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.TextBox outputBox;
-
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -14,7 +16,6 @@
             }
             base.Dispose(disposing);
         }
-
         private void InitializeComponent()
         {
             startButton = new Button();
@@ -80,9 +81,7 @@
             Text = "Cardmarket Price Updater";
             ResumeLayout(false);
             PerformLayout();
-
         }
-
         private RadioButton checkBoxGBP;
         private RadioButton checkBoxEUR;
     }
