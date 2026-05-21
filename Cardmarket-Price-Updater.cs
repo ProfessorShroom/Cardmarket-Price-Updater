@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
-// Copyright © Charlie Howard 2026 All rights reserved.
 
 namespace CardPriceUpdaterGui
 {
@@ -16,6 +14,22 @@ namespace CardPriceUpdaterGui
         public CardmarketPriceUpdater()
         {
             InitializeComponent();
+
+            // ---------------- PRICE TYPE DROPDOWN ----------------
+            cmbPriceType.DropDownStyle = ComboBoxStyle.DropDownList;
+
+            cmbPriceType.DataSource = Enum.GetValues(typeof(PriceType))
+                .Cast<PriceType>()
+                .Select(x => new
+                {
+                    Value = x,
+                    Text = GetPriceTypeText(x)
+                })
+                .ToList();
+
+            cmbPriceType.DisplayMember = "Text";
+            cmbPriceType.ValueMember = "Value";
+            cmbPriceType.SelectedValue = PriceType.avg30;
 
             // ---------------- LOGGING BOX ----------------
             outputBox.Font = new Font("Consolas", 10);
@@ -34,7 +48,7 @@ namespace CardPriceUpdaterGui
                 AutoSize = true,
                 Left = 10,
                 Top = this.ClientSize.Height - 25,
-                LinkColor = Color.Black
+                LinkColor = Color.White
             };
 
             versionLabel.Click += (_, __) =>
@@ -48,13 +62,24 @@ namespace CardPriceUpdaterGui
 
             Controls.Add(versionLabel);
 
-            // keep pinned to bottom on resize
-            this.Resize += (_, __) =>
+            Resize += (_, __) =>
             {
                 versionLabel.Top = this.ClientSize.Height - 25;
             };
 
             startButton.Click += StartButton_Click;
+        }
+
+        // ---------------- DISPLAY TEXT ----------------
+        private string GetPriceTypeText(PriceType type)
+        {
+            return type switch
+            {
+                PriceType.trend => "Trend",
+                PriceType.avg7 => "7-Day Average",
+                PriceType.avg30 => "30-Day Average",
+                _ => type.ToString()
+            };
         }
 
         // ---------------- LOGGING ----------------
@@ -89,17 +114,23 @@ namespace CardPriceUpdaterGui
             try
             {
                 outputBox.Clear();
-
-                AppendLog("=== STARTING UPDATE ===");
+                AppendLog("Starting Update");
                 AppendLog($"File: {dlg.FileName}");
 
+                // ✅ READ UI VALUE ON UI THREAD FIRST
+                var selectedPriceType = (PriceType)cmbPriceType.SelectedValue!;
+
+                // Now safe to go background
                 await Task.Run(() =>
                 {
-                    new PriceUpdater(AppendLog, CurrencyMode.AUTO)
-                        .Run(dlg.FileName);
+                    new PriceUpdater(
+                        AppendLog,
+                        CurrencyMode.AUTO,
+                        selectedPriceType
+                    ).Run(dlg.FileName);
                 });
 
-                AppendLog("=== PROCESS COMPLETE ===");
+                AppendLog("Prices Updated!");
             }
             catch (Exception ex)
             {
@@ -109,6 +140,13 @@ namespace CardPriceUpdaterGui
             {
                 startButton.Enabled = true;
             }
+        }
+
+        // ---------------- CLOSE BUTTON ----------------
+
+        private void closeButton_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

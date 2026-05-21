@@ -73,7 +73,11 @@ namespace CardPriceUpdaterGui
                         };
                     }
                 }
-                var updater = new PriceUpdater(Log, currencyMode);
+                var updater = new PriceUpdater(
+                    Log,
+                    currencyMode,
+                    PriceType.avg7
+                );
                 List<string> files = new();
                 if (!string.IsNullOrWhiteSpace(file))
                 {

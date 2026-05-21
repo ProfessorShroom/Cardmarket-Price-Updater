@@ -15,10 +15,15 @@ namespace CardPriceUpdaterGui
     {
         private readonly Action<string>? _log;
         private readonly CurrencyMode _mode;
-        public PriceUpdater(Action<string>? log = null, CurrencyMode mode = CurrencyMode.AUTO)
+        private readonly PriceType _priceType;
+        public PriceUpdater(
+            Action<string>? log = null,
+            CurrencyMode mode = CurrencyMode.AUTO,
+            PriceType priceType = PriceType.avg30)
         {
             _log = log;
             _mode = mode;
+            _priceType = priceType;
         }
         private void Log(string msg)
         {
@@ -107,19 +112,44 @@ namespace CardPriceUpdaterGui
         private Dictionary<int, decimal> BuildPriceMap(JsonDocument[] docs)
         {
             var map = new Dictionary<int, decimal>();
+
+            string fieldName = _priceType switch
+            {
+                PriceType.trend => "Trending Price",
+                PriceType.avg7 => "7-Day Average",
+                PriceType.avg30 => "30-Day Average",
+                _ => "30-Day Average"
+            };
+
+            Log($"Using price field: {fieldName}");
+
             foreach (var doc in docs)
             {
                 if (!doc.RootElement.TryGetProperty("priceGuides", out var guides))
                     continue;
+
                 foreach (var e in guides.EnumerateArray())
                 {
-                    if (!e.TryGetProperty("idProduct", out var idEl)) continue;
-                    if (!e.TryGetProperty("trend", out var trEl)) continue;
-                    if (!int.TryParse(idEl.ToString(), out int id)) continue;
-                    if (!decimal.TryParse(trEl.ToString(), NumberStyles.Any, CultureInfo.InvariantCulture, out var price)) continue;
+                    if (!e.TryGetProperty("idProduct", out var idEl))
+                        continue;
+
+                    if (!e.TryGetProperty(fieldName, out var priceEl))
+                        continue;
+
+                    if (!int.TryParse(idEl.ToString(), out int id))
+                        continue;
+
+                    if (!decimal.TryParse(
+                            priceEl.ToString(),
+                            NumberStyles.Any,
+                            CultureInfo.InvariantCulture,
+                            out var price))
+                        continue;
+
                     map[id] = price;
                 }
             }
+
             return map;
         }
         private async Task<decimal> GetEurToGbpRateAsync(HttpClient http)
