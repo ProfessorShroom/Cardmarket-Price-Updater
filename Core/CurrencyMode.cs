@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 // Copyright © Charlie Howard 2026 All rights reserved.
 
-namespace CardPriceUpdaterGui
+namespace Cardmarket_Price_Updater.Core
 {
     public enum CurrencyMode
     {

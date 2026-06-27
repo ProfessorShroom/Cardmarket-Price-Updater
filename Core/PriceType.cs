@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CardPriceUpdaterGui
+namespace Cardmarket_Price_Updater.Core
 {
     public enum PriceType
     {

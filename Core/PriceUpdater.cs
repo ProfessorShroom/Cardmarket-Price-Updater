@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using Cardmarket_Price_Updater.Core;
+using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -42,7 +43,6 @@ namespace CardPriceUpdaterGui
             ExcelPackage.License.SetNonCommercialPersonal("Charlie Howard");
             Log($"File: {workbookPath}");
             Log("Starting...");
-            // ---------------- BACKUP (overwrite same file) ----------------
             string backupPath = workbookPath + ".bak";
             File.Copy(workbookPath, backupPath, true);
             Log($"Backup created: {backupPath}");
@@ -79,26 +79,37 @@ namespace CardPriceUpdaterGui
             using var pkg = new ExcelPackage(new FileInfo(temp));
             var ws = pkg.Workbook.Worksheets[0];
             var (row, priceCol, tsCol, pidCol, gameCol) = FindHeader(ws);
-            Log($"Header row: {row}");
+            Log($"Header found at row: {row}. Cols: Price={priceCol}, TS={tsCol}, PID={pidCol}, Game={gameCol}");
+
+            if (row == -1)
+            {
+                Log("ERROR: Could not find required column headers in first 20 rows.");
+                return;
+            }
+
             int last = ws.Dimension.End.Row;
+            int updatedCount = 0;
             for (int r = row + 1; r <= last; r++)
             {
-                var pidText = ws.Cells[r, pidCol].Text;
+                var pidText = ws.Cells[r, pidCol].Text.Trim();
                 if (!int.TryParse(pidText, out int pid))
                     continue;
+
                 if (!map.TryGetValue(pid, out var eur))
+                {
+                    Log($"Row {r}: PID {pid} not found in price guide.");
                     continue;
+                }
                 decimal value = useGbp ? Math.Round(eur * fx, 2) : eur;
                 ws.Cells[r, priceCol].Value = value;
                 ws.Cells[r, tsCol].Value = DateTime.Now.ToString("yyyy-MM-dd");
-                Log($"Row {r}: {pid} → {value}");
+                updatedCount++;
             }
             pkg.Save();
             File.Copy(temp, workbookPath, true);
             File.Delete(temp);
-            Log("DONE");
+            Log($"DONE. Updated {updatedCount} rows.");
         }
-        // ---------------- HELPERS ----------------
         private async Task<JsonDocument[]> DownloadPriceGuidesAsync(HttpClient http, string[] urls)
         {
             var list = new List<JsonDocument>();
@@ -113,12 +124,13 @@ namespace CardPriceUpdaterGui
         {
             var map = new Dictionary<int, decimal>();
 
+            // Update these field names to match the actual JSON keys
             string fieldName = _priceType switch
             {
-                PriceType.trend => "Trending Price",
-                PriceType.avg7 => "7-Day Average",
-                PriceType.avg30 => "30-Day Average",
-                _ => "30-Day Average"
+                PriceType.trend => "trend",
+                PriceType.avg7 => "avg7",
+                PriceType.avg30 => "avg30",
+                _ => "avg30"
             };
 
             Log($"Using price field: {fieldName}");
@@ -133,6 +145,7 @@ namespace CardPriceUpdaterGui
                     if (!e.TryGetProperty("idProduct", out var idEl))
                         continue;
 
+                    // This will now successfully match "avg7", "avg30", etc.
                     if (!e.TryGetProperty(fieldName, out var priceEl))
                         continue;
 
@@ -158,8 +171,7 @@ namespace CardPriceUpdaterGui
             using var j = JsonDocument.Parse(txt);
             return j.RootElement.GetProperty("rates").GetProperty("GBP").GetDecimal();
         }
-        private (int headerRow, int priceCol, int tsCol, int pidCol, int gameCol)
-            FindHeader(ExcelWorksheet ws)
+        private (int headerRow, int priceCol, int tsCol, int pidCol, int gameCol) FindHeader(ExcelWorksheet ws)
         {
             int maxRow = Math.Min(20, ws.Dimension.End.Row);
             int maxCol = ws.Dimension.End.Column;

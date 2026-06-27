@@ -45,28 +45,33 @@ Run the .exe from terminal using these commands for headless use:
 - /d to specify a directory, this will run through every .xlsx in that directory, for example: .\Cardmarket-Price-Updater.exe /d .\
 - /c to specify a currency, by default it's set to auto which will autodetect the currency in your spreadsheet and if not found it will fall back to £, for example: .\Cardmarket-Price-Updater.exe /c e /f .\Template.xlsx (/c e is EUR (€) and /c p is GBP (£))
 - /log to log output to a file, for example: .\Cardmarket-Price-Updater.exe /f .\Template.xlsx /log .\log.txt
-- /q, /quiet, /s, /silent all allow you to run silently, for example .\Cardmarket-Price-Updater.exe /f .\Template.xlsx /s
+- /q, /quiet, /s, /silent all allow you to run silently with no dialog box at all, for example .\Cardmarket-Price-Updater.exe /f .\Template.xlsx /s
 
 ### Example Spreadsheet
 
 | Release Date | Game      | Set Name                           | Card Name              | Set Code   | Card Price (£) | Price Updated | Cardmarket ID | Rarity                | Own? | Edition | Bought For (£) | Collection Value (£)              | Remaning Cards | Total Cards |
 | ------------ | --------- | ---------------------------------- | ---------------------- | ---------- | -------------- | ------------- | ------------- | --------------------- | ---- | ------- | -------------- | --------------------------------- | -------------- | ----------- |
-| 12/09/2025   | Yu-Gi-Oh! | Nike Collaboration Cards (special) | Red-Eyes Black Dragon  | NKC1-EN002 | £372.45        | 2026-05-21    | 845882        | Prismatic Secret Rare | ✔    | LIMITED | £200.00        | £28,799.95                        | 1              | 4           |
-| 08/03/2002   | Yu-Gi-Oh! | Legend of Blue-Eyes White Dragon   | Blue-Eyes White Dragon | LOB-001    | £55.10         | 2026-05-21    | 577919        | Ultra Rare            | ✖    | ✖       |                | Amount Spent (£)                  |                |             |
-| 05/08/1993   | MTG       | Alpha                              | Black Lotus            |            | £7,962.67      | 2026-05-21    | 5465          | Rare                  | ✔    | ✔       | £20,000.00     | £22,250.00                        |                |             |
-| 09/01/1999   | Pokémon   | Base Set                           | Charizard              | BS 4       | £1,570.66      | 2026-05-21    | 660224        | Holo Rare             | ✔    | PSA9    | £2,000.00      | Amount to Complete Collection (£) |                |             |
-| 18/11/2008   | Yu-Gi-Oh! | Crossroads of Chaos                | Black Rose Dragon      | CSOC-EN039 | £288.51        | 2026-05-21    | 108490        | Ghost Rare            | ✔    | PSA10   | £50.00         | £116.06                           |                |             |
+| 12/09/2025   | Yu-Gi-Oh! | Nike Collaboration Cards (special) | Red-Eyes Black Dragon  | NKC1-EN002 | £376.62        | 2026-06-27    | 845882        | Prismatic Secret Rare | ✔    | LIMITED | £200.00        | £28,799.95                        | 1              | 4           |
+| 08/03/2002   | Yu-Gi-Oh! | Legend of Blue-Eyes White Dragon   | Blue-Eyes White Dragon | LOB-001    | £131.90        | 2026-06-27    | 577919        | Ultra Rare            | ✖    | ✖       |                | Amount Spent (£)                  |                |             |
+| 05/08/1993   | MTG       | Alpha                              | Black Lotus            |            | £7,934.89      | 2026-06-27    | 5465          | Rare                  | ✔    | ✔       | £20,000.00     | £22,250.00                        |                |             |
+| 09/01/1999   | Pokémon   | Base Set                           | Charizard              | BS 4       | £1,718.97      | 2026-06-27    | 660224        | Holo Rare             | ✔    | PSA9    | £2,000.00      | Amount to Complete Collection (£) |                |             |
+| 18/11/2008   | Yu-Gi-Oh! | Crossroads of Chaos                | Black Rose Dragon      | CSOC-EN039 | £274.33        | 2026-06-27    | 108490        | Ghost Rare            | ✔    | PSA10   | £50.00         | £116.06                           |                |             |
 
 #### Changelog
 
 #### Latest Update
 
+**Update 1.4.0.0**
+
+- Changed quiet mode to actually hide the CLI completely.
+- Added auto update feature.
+
+#### Older Updates
+
 **Update 1.3.0.0**
 
 - Updated GUI to a more modern look.
 - Added support to select pricing model; Trending Price, 7-Day Average Price and 30-Day Average Price. By default, it is set to 30-Day Average Price, but you can change it to Trending or 7-Day Average Price if you want a more stable price.
-
-#### Older Updates
 
 **Update 1.2.0.0**
 
