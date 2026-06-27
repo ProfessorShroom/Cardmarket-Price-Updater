@@ -29,7 +29,9 @@ Set Code is only really used for Yu-Gi-Oh! from what I can tell, as that has a c
 
 Card Price and Price Updated are filled out by the program, so leave them blank; they will get overwritten if you fill them out.
 
-Cardmarket ID is the important part; this is the ID from Cardmarket's site that the program will use to find the correct card. For example, if you want to get the price of [LOB-001 Blue-Eyes White Dragon](https://www.cardmarket.com/en/YuGiOh/Products/Singles/Legend-of-Blue-Eyes-White-Dragon/Blue-Eyes-White-Dragon-V1-Ultra-Rare), the ID would be 577919. This is obtained by going to the card listing page and opening inspect (right click and press inspect, or press F12) and in that search box that opens, type in idProduct and hit enter, which will result in something like this
+Cardmarket ID is the important part; this is the ID from Cardmarket's site that the program will use to find the correct card. For example, if you want to get the price of [LOB-001 Blue-Eyes White Dragon](https://www.cardmarket.com/en/YuGiOh/Products/Singles/Legend-of-Blue-Eyes-White-Dragon/Blue-Eyes-White-Dragon-V1-Ultra-Rare), the ID would be 577919. The easiest way to obtain this ID is to go to the URL of the card you want, right click on the card image and press either "Open Image in New Tab" or "Copy Image Link". That link will look like this [https://product-images.s3.cardmarket.com/5/LOB/577919/577919.jpg](https://product-images.s3.cardmarket.com/5/LOB/577919/577919.jpg), that 6 digit number before .jpg is our ID.
+
+Another way to obtain the ID is by going to the card listing page and opening inspect (right click and press inspect, or press F12) and in that search box that opens, type in idProduct and hit enter, which will result in something like this
 ```
 <input type="hidden" name="idProduct" value="577919">
 ```
