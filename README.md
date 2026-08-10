@@ -1,6 +1,7 @@
-﻿﻿ ![Arch](https://img.shields.io/badge/Arch-AMD64-blue) ![OS](https://img.shields.io/badge/OS-Windows%2010%20|%20Windows%2011-green)
+﻿﻿![Arch](https://img.shields.io/badge/Arch-AMD64-blue) ![OS](https://img.shields.io/badge/OS-Windows%2010%20|%20Windows%2011-green)
 
 ## Cardmarket Price Updater
+
 #### Copyright © Charlie Howard 2026 All rights reserved.
 
 A C# based GUI/CLI that gets prices from [Cardmarket](https://www.cardmarket.com/en) based on spreadsheet contents for collection value purposes in either GBP (£) or EUR (€).
@@ -32,9 +33,11 @@ Card Price and Price Updated are filled out by the program, so leave them blank;
 Cardmarket ID is the important part; this is the ID from Cardmarket's site that the program will use to find the correct card. For example, if you want to get the price of [LOB-001 Blue-Eyes White Dragon](https://www.cardmarket.com/en/YuGiOh/Products/Singles/Legend-of-Blue-Eyes-White-Dragon/Blue-Eyes-White-Dragon-V1-Ultra-Rare), the ID would be 577919. The easiest way to obtain this ID is to go to the URL of the card you want, right click on the card image and press either "Open Image in New Tab" or "Copy Image Link". That link will look like this [https://product-images.s3.cardmarket.com/5/LOB/577919/577919.jpg](https://product-images.s3.cardmarket.com/5/LOB/577919/577919.jpg), that 6 digit number before .jpg is our ID.
 
 Another way to obtain the ID is by going to the card listing page and opening inspect (right click and press inspect, or press F12) and in that search box that opens, type in idProduct and hit enter, which will result in something like this
-```
+
+```json
 <input type="hidden" name="idProduct" value="577919">
 ```
+
 The value is what you put in Cardmarket ID.
 
 Own? and Bought For are only required if you want to use the collection value part of the sheet, as this will add up the values of the cards you own and show you the amount left to spend. These values are an average so not 100% accurate but it's better than nothing.
