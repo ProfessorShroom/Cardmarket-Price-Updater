@@ -1,9 +1,7 @@
 <Solution>
   <Configurations>
     <Platform Name="Any CPU" />
-    <Platform Name="x64" />
   </Configurations>
-  <Project Path="Cardmarket-Price-Updater.csproj">
-    <Platform Solution="Debug|x64" Project="x64" />
-  </Project>
+  <Project Path="src/Avalonia/Cardmarket-Price-Updater.App.csproj" />
+  <Project Path="src/Core/Cardmarket-Price-Updater.Core.csproj" />
 </Solution>

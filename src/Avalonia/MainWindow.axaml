@@ -1,0 +1,103 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Cardmarket_Price_Updater.MainWindow"
+        Title="Cardmarket Price Updater"
+        Width="800" Height="500"
+        MinWidth="620" MinHeight="380"
+        Background="#1E1E1E"
+        Icon="/Assets/app-icon.ico">
+
+  <Window.Styles>
+    <Style Selector="Button.flat">
+      <Setter Property="Background" Value="#3C3C3C" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Padding" Value="10,6" />
+    </Style>
+    <Style Selector="Button.flat:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#555555" />
+    </Style>
+    <Style Selector="Button.flat:pressed /template/ ContentPresenter">
+      <Setter Property="Background" Value="#2D2D2D" />
+    </Style>
+
+    <Style Selector="ToggleButton.currency">
+      <Setter Property="Background" Value="#3C3C3C" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Width" Value="36" />
+      <Setter Property="Height" Value="28" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+    </Style>
+    <Style Selector="ToggleButton.currency:checked /template/ ContentPresenter">
+      <Setter Property="Background" Value="#5A5A5A" />
+    </Style>
+    <Style Selector="ToggleButton.currency:pointerover /template/ ContentPresenter">
+      <Setter Property="Background" Value="#4B4B4B" />
+    </Style>
+
+    <Style Selector="Button.link">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Padding" Value="0" />
+    </Style>
+    <Style Selector="Button.link:pointerover /template/ ContentPresenter">
+      <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+    </Style>
+
+    <Style Selector="TextBox /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="#2D2D2D" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="TextBox:pointerover /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="#2D2D2D" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="TextBox:focus /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="#2D2D2D" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+    <Style Selector="TextBox:focus-within /template/ Border#PART_BorderElement">
+      <Setter Property="Background" Value="#2D2D2D" />
+      <Setter Property="BorderBrush" Value="Transparent" />
+    </Style>
+  </Window.Styles>
+
+  <DockPanel>
+    <Border DockPanel.Dock="Top" Background="#282828" Padding="12,10">
+      <Grid ColumnDefinitions="Auto,10,Auto,Auto,Auto,10,Auto,*,Auto">
+        <Button x:Name="StartButton" Grid.Column="0" Classes="flat" Content="Get Prices (Browse Files)" />
+
+        <ToggleButton x:Name="CurrencyGbp" Grid.Column="2" Classes="currency" Content="£" IsChecked="True" />
+        <ToggleButton x:Name="CurrencyEur" Grid.Column="3" Classes="currency" Content="€" Margin="4,0,0,0" />
+        <ToggleButton x:Name="CurrencyUsd" Grid.Column="4" Classes="currency" Content="$" Margin="4,0,0,0" />
+
+        <ComboBox x:Name="PriceTypeCombo" Grid.Column="6" Width="170" />
+
+        <Button x:Name="CloseButton" Grid.Column="8" Classes="flat" Content="Close" />
+      </Grid>
+    </Border>
+
+    <Border DockPanel.Dock="Bottom" Padding="12,6">
+      <Button x:Name="VersionLink" Classes="link" HorizontalAlignment="Left" />
+    </Border>
+
+    <Border Padding="12,10,12,0">
+      <TextBox x:Name="OutputBox"
+               Background="#2D2D2D"
+               Foreground="White"
+               BorderThickness="0"
+               FontFamily="Consolas,Menlo,monospace"
+               FontSize="13"
+               IsReadOnly="True"
+               AcceptsReturn="True"
+               TextWrapping="NoWrap"
+               VerticalContentAlignment="Top" />
+    </Border>
+  </DockPanel>
+</Window>

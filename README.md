@@ -1,10 +1,10 @@
-﻿﻿![Arch](https://img.shields.io/badge/Arch-AMD64-blue) ![OS](https://img.shields.io/badge/OS-Windows%2010%20|%20Windows%2011-green)
+﻿﻿![Arch](https://img.shields.io/badge/Arch-AMD64-blue) ![OS](https://img.shields.io/badge/OS-Windows%20|%20Ubuntu%20|%20Fedora-green)
 
 ## Cardmarket Price Updater
 
 #### Copyright © Charlie Howard 2026 All rights reserved.
 
-A C# based GUI/CLI that gets prices from [Cardmarket](https://www.cardmarket.com/en) based on spreadsheet contents for collection value purposes in either GBP (£) or EUR (€).
+A C# based GUI/CLI that gets prices from [Cardmarket](https://www.cardmarket.com/en) based on spreadsheet contents for collection value purposes in GBP (£), EUR (€) or USD ($).
 
 Currently supports Magic: The Gathering, Pokémon and Yu-Gi-Oh!
 
@@ -13,6 +13,20 @@ Currently supports Magic: The Gathering, Pokémon and Yu-Gi-Oh!
 At the moment, the cardmarket ID is manual, but when Cardmarket open up their API again, I will try to automate it.
 
 The prices are based on an average of everything, so 1st Edition and Unlimited, etc. Once Cardmarket open up the API, I will be able to specify this to 1st Edition as this is what collectors want.
+
+### Platforms
+
+- **Windows** - installer/exe, same as before, still auto-updates itself.
+- **Ubuntu / Fedora** - via Flatpak (recommended, updates through `flatpak update`).
+
+### Project layout
+
+```
+src/Core/       - shared logic: price lookup, FX conversion, retry/backoff, config, backups
+src/Avalonia/   - the app itself (GUI + CLI entry point), one codebase for Windows and Linux
+packaging/      - Flatpak manifest for Linux, update.xml for the Windows auto-updater
+Template.xlsx   - starter spreadsheet
+```
 
 ### Usage
 
@@ -42,36 +56,73 @@ The value is what you put in Cardmarket ID.
 
 Own? and Bought For are only required if you want to use the collection value part of the sheet, as this will add up the values of the cards you own and show you the amount left to spend. These values are an average so not 100% accurate but it's better than nothing.
 
+### Backups
+
+Every run copies your spreadsheet into a `Backups` folder next to it before making any changes, named `<filename>.<timestamp>.bak`. By default the 5 most recent backups per file are kept and older ones are pruned automatically; change this in the config file (see below) if you want more or fewer.
+
+### Retries
+
+Downloads (price guide + FX rate) automatically retry a few times with a short backoff if Cardmarket or the FX API has a hiccup, instead of failing the whole run on one bad request. Retry count and delay are configurable (see below).
+
+### Config file
+
+Your last-used currency and price type are remembered automatically. Retry and backup settings live in a small JSON config file:
+
+- Windows: `%AppData%\CardmarketPriceUpdater\config.json`
+- Linux: `~/.config/CardmarketPriceUpdater/config.json` (or the Flatpak-sandboxed equivalent)
+
+```json
+{
+  "CurrencyMode": "AUTO",
+  "PriceType": "avg30",
+  "MaxRetries": 3,
+  "RetryDelaySeconds": 2,
+  "BackupRetentionCount": 5
+}
+```
+
+It's created automatically on first run with these defaults - delete it to reset.
+
 ### CLI Usage
 
-Run the .exe from terminal using these commands for headless use:
+Run the executable from a terminal using these commands for headless use (same on Windows and Linux):
 
-- /f to specify a filename, for example: .\Cardmarket-Price-Updater.exe /f .\Template.xlsx
-- /d to specify a directory, this will run through every .xlsx in that directory, for example: .\Cardmarket-Price-Updater.exe /d .\
-- /c to specify a currency, by default it's set to auto which will autodetect the currency in your spreadsheet and if not found it will fall back to £, for example: .\Cardmarket-Price-Updater.exe /c e /f .\Template.xlsx (/c e is EUR (€) and /c p is GBP (£))
-- /log to log output to a file, for example: .\Cardmarket-Price-Updater.exe /f .\Template.xlsx /log .\log.txt
-- /q, /quiet, /s, /silent all allow you to run silently with no dialog box at all, for example .\Cardmarket-Price-Updater.exe /f .\Template.xlsx /s
+- /f to specify a filename, for example: `./Cardmarket-Price-Updater /f ./Template.xlsx`
+- /d to specify a directory, this will run through every .xlsx in that directory, for example: `./Cardmarket-Price-Updater /d ./`
+- /r combined with /d, also searches subdirectories
+- /c to specify a currency, by default it's set to auto which will use GBP, for example: `./Cardmarket-Price-Updater /c e /f ./Template.xlsx` (`/c e` is EUR €, `/c p` is GBP £, `/c u` is USD $)
+- /log to log output to a file, for example: `./Cardmarket-Price-Updater /f ./Template.xlsx /log ./log.txt`
+- /q, /quiet, /s, /silent all allow you to run silently with no console output at all, for example `./Cardmarket-Price-Updater /f ./Template.xlsx /s`
 
 ### Example Spreadsheet
 
 | Release Date | Game      | Set Name                           | Card Name              | Set Code   | Card Price (£) | Price Updated | Cardmarket ID | Rarity                | Own? | Edition | Bought For (£) | Collection Value (£)              | Remaning Cards | Total Cards |
-| ------------ | --------- | ---------------------------------- | ---------------------- | ---------- | -------------- | ------------- | ------------- | --------------------- | ---- | ------- | -------------- | --------------------------------- | -------------- | ----------- |
-| 12/09/2025   | Yu-Gi-Oh! | Nike Collaboration Cards (special) | Red-Eyes Black Dragon  | NKC1-EN002 | £376.62        | 2026-06-27    | 845882        | Prismatic Secret Rare | ✔    | LIMITED | £200.00        | £28,799.95                        | 1              | 4           |
-| 08/03/2002   | Yu-Gi-Oh! | Legend of Blue-Eyes White Dragon   | Blue-Eyes White Dragon | LOB-001    | £131.90        | 2026-06-27    | 577919        | Ultra Rare            | ✖    | ✖       |                | Amount Spent (£)                  |                |             |
-| 05/08/1993   | MTG       | Alpha                              | Black Lotus            |            | £7,934.89      | 2026-06-27    | 5465          | Rare                  | ✔    | ✔       | £20,000.00     | £22,250.00                        |                |             |
-| 09/01/1999   | Pokémon   | Base Set                           | Charizard              | BS 4       | £1,718.97      | 2026-06-27    | 660224        | Holo Rare             | ✔    | PSA9    | £2,000.00      | Amount to Complete Collection (£) |                |             |
-| 18/11/2008   | Yu-Gi-Oh! | Crossroads of Chaos                | Black Rose Dragon      | CSOC-EN039 | £274.33        | 2026-06-27    | 108490        | Ghost Rare            | ✔    | PSA10   | £50.00         | £116.06                           |                |             |
+| ------------ | --------- | ---------------------------------- | ---------------------- | ---------- | -------------- | ------------- | ------------- | ---------------------- | ---- | ------- | -------------- | ---------------------------------- | -------------- | ----------- |
+| 12/09/2025   | Yu-Gi-Oh! | Nike Collaboration Cards (special) | Red-Eyes Black Dragon  | NKC1-EN002 | £402.53        | 2026-08-26    | 845882        | Prismatic Secret Rare | ✔    | LIMITED | £200.00        | £28,799.95                        | 1              | 4           |
+| 08/03/2002   | Yu-Gi-Oh! | Legend of Blue-Eyes White Dragon   | Blue-Eyes White Dragon | LOB-001    | £467.11        | 2026-08-26    | 577919        | Ultra Rare            | ✖    | ✖       |                | Amount Spent (£)                  |                |             |
+| 05/08/1993   | MTG       | Alpha                              | Black Lotus            |            | £9,876.27      | 2026-08-26    | 5465          | Rare                  | ✔    | ✔       | £20,000.00     | £22,250.00                        |                |             |
+| 09/01/1999   | Pokémon   | Base Set                           | Charizard              | BS 4       | £2,119.74      | 2026-08-26    | 660224        | Holo Rare             | ✔    | PSA9    | £2,000.00      | Amount to Complete Collection (£) |                |             |
+| 18/11/2008   | Yu-Gi-Oh! | Crossroads of Chaos                | Black Rose Dragon      | CSOC-EN039 | £245.40        | 2026-08-26    | 108490        | Ghost Rare            | ✔    | PSA10   | £50.00         | £116.06                           |                |             |
 
 #### Changelog
 
 #### Latest Update
 
+**Update 2.0.0.0**
+
+- Rewrote the GUI in Avalonia instead of WinForms, so it now runs on Linux (Ubuntu/Fedora, packaged as a Flatpak) as well as Windows, from one shared codebase.
+- Added USD ($) as a third currency alongside GBP and EUR.
+- Downloads now retry automatically with backoff instead of failing the run on one bad request.
+- Backups are now timestamped and kept in a `Backups` folder with automatic pruning, instead of a single overwritten `.bak` file.
+- Added a small JSON config file for default currency/price type and retry/backup settings, created automatically on first run.
+- Replaced AutoUpdater.NET.Official (which required WinForms and blocked a Linux build entirely) with a small built-in update checker on Windows - it now shows a "new version available" link instead of silently self-updating. Linux gets updates via `flatpak update` instead.
+
+#### Older Updates
+
 **Update 1.4.0.0**
 
 - Changed quiet mode to actually hide the CLI completely.
 - Added auto update feature.
-
-#### Older Updates
 
 **Update 1.3.0.0**
 
