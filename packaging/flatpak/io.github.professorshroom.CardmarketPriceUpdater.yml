@@ -17,8 +17,7 @@ build-options:
 finish-args:
   - --share=network
   - --share=ipc
-  - --socket=wayland
-  - --socket=fallback-x11
+  - --socket=x11
   - --device=dri
 
 modules:
@@ -32,7 +31,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/ProfessorShroom/Cardmarket-Price-Updater.git
-        tag: v2.0.0.9
+        tag: v2.0.0.10
       - nuget-sources.json
       - type: file
         path: io.github.professorshroom.CardmarketPriceUpdater.desktop
