@@ -32,7 +32,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/ProfessorShroom/Cardmarket-Price-Updater.git
-        tag: v2.0.0.7
+        tag: v2.0.0.8
       - nuget-sources.json
       - type: file
         path: io.github.professorshroom.CardmarketPriceUpdater.desktop

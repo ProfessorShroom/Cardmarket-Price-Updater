@@ -85,12 +85,24 @@ namespace Cardmarket_Price_Updater
         }
 
 public static AppBuilder BuildAvaloniaApp()
-    => AppBuilder.Configure<App>()
+{
+    var builder = AppBuilder.Configure<App>()
         .UsePlatformDetect()
-        .With(new X11PlatformOptions())
-        .With(new WaylandPlatformOptions()) // <--- Enables native Wayland rendering
+        .WithInteroperability()
         .LogToTrace();
 
+    // If running under a Wayland session (like on Fedora by default)
+    if (OperatingSystem.IsLinux() && Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") is not null)
+    {
+        // Tell Avalonia to prefer Wayland rendering if supported
+        builder.With(new X11PlatformOptions
+        {
+            UseGpu = true
+        });
+    }
+
+    return builder;
+}
         private static void RunCli(string[] args)
         {
             var config = AppConfig.Load();
