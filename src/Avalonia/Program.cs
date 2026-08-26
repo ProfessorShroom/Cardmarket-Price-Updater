@@ -84,15 +84,12 @@ namespace Cardmarket_Price_Updater
             }
         }
 
-public static AppBuilder BuildAvaloniaApp() =>
-            AppBuilder.Configure<App>()
-                .UsePlatformDetect()
-                .With(new X11PlatformOptions
-                {
-                    EnableMultiTouch = true
-                })
-                .WithInterFont()
-                .LogToTrace();
+public static AppBuilder BuildAvaloniaApp()
+    => AppBuilder.Configure<App>()
+        .UsePlatformDetect()
+        .With(new X11PlatformOptions())
+        .With(new WaylandPlatformOptions()) // <--- Enables native Wayland rendering
+        .LogToTrace();
 
         private static void RunCli(string[] args)
         {
