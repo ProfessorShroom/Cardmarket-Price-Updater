@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.X11;
 using Cardmarket_Price_Updater.Core;
 using CardPriceUpdaterGui;
 using System;
@@ -84,25 +85,24 @@ namespace Cardmarket_Price_Updater
             }
         }
 
-public static AppBuilder BuildAvaloniaApp()
-{
-    var builder = AppBuilder.Configure<App>()
-        .UsePlatformDetect()
-        .WithInteroperability()
-        .LogToTrace();
-
-    // If running under a Wayland session (like on Fedora by default)
-    if (OperatingSystem.IsLinux() && Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") is not null)
-    {
-        // Tell Avalonia to prefer Wayland rendering if supported
-        builder.With(new X11PlatformOptions
+        public static AppBuilder BuildAvaloniaApp()
         {
-            UseGpu = true
-        });
-    }
+            var builder = AppBuilder.Configure<App>()
+                .UsePlatformDetect()
+                .LogToTrace();
 
-    return builder;
-}
+            // If we fall back to X11/XWayland, prefer GLX then EGL then software rendering
+            if (OperatingSystem.IsLinux() && Environment.GetEnvironmentVariable("WAYLAND_DISPLAY") is not null)
+            {
+                builder.With(new X11PlatformOptions
+                {
+                    RenderingMode = new[] { X11RenderingMode.Glx, X11RenderingMode.Egl, X11RenderingMode.Software }
+                });
+            }
+
+            return builder;
+        }
+
         private static void RunCli(string[] args)
         {
             var config = AppConfig.Load();
