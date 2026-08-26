@@ -6,6 +6,8 @@ sdk: org.freedesktop.Sdk
 sdk-extensions:
   - org.freedesktop.Sdk.Extension.dotnet8
 
+command: Cardmarket-Price-Updater.App
+
 build-options:
   no-debuginfo: true
   append-path: /usr/lib/sdk/dotnet8/bin
@@ -30,7 +32,7 @@ modules:
     sources:
       - type: git
         url: https://github.com/ProfessorShroom/Cardmarket-Price-Updater.git
-        tag: v2.0.0.4
+        tag: v2.0.0.5
       - nuget-sources.json
       - type: file
         path: io.github.professorshroom.CardmarketPriceUpdater.desktop
