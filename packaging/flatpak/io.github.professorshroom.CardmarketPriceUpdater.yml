@@ -19,17 +19,18 @@ finish-args:
   - --share=ipc
   - --socket=x11
   - --device=dri
-
+  - --filesystem=home
 modules:
   - name: cardmarket-price-updater
     buildsystem: simple
     build-commands:
       - dotnet publish src/Avalonia/Cardmarket-Price-Updater.App.csproj -c Release -r linux-x64 --self-contained true --source ./nuget-sources -o /app/bin
-      - install -Dm644 io.github.professorshroom.CardmarketPriceUpdater.desktop /app/share/applications/io.github.professorshroom.CardmarketPriceUpdater.desktop
-      - install -Dm644 io.github.professorshroom.CardmarketPriceUpdater.appdata.xml /app/share/metainfo/io.github.professorshroom.CardmarketPriceUpdater.appdata.xml
-      - install -Dm644 app-icon-256.png /app/share/icons/hicolor/256x256/apps/io.github.professorshroom.CardmarketPriceUpdater.png
+      - install -Dm644 packaging/flatpak/io.github.professorshroom.CardmarketPriceUpdater.desktop /app/share/applications/io.github.professorshroom.CardmarketPriceUpdater.desktop
+      - install -Dm644 packaging/flatpak/io.github.professorshroom.CardmarketPriceUpdater.appdata.xml /app/share/metainfo/io.github.professorshroom.CardmarketPriceUpdater.appdata.xml
+      - install -Dm644 packaging/flatpak/app-icon-256.png /app/share/icons/hicolor/256x256/apps/io.github.professorshroom.CardmarketPriceUpdater.png
     sources:
       - type: git
         url: https://github.com/ProfessorShroom/Cardmarket-Price-Updater.git
-        tag: v2.0.1.0
-      - nuget-sources.json
+        tag: v2.0.2.0
+      - type: file
+        path: packaging/flatpak/nuget-sources.json
