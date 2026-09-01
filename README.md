@@ -17,7 +17,15 @@ The prices are based on an average of everything, so 1st Edition and Unlimited, 
 ### Platforms
 
 - **Windows** - installer/exe, same as before, still auto-updates itself.
-- **Ubuntu / Fedora** - via Flatpak (recommended, updates through `flatpak update`).
+- **Ubuntu / Fedora** - via Flatpak
+
+### Installation & Updating (Linux via Flatpak)
+
+To install or update to the latest release, run this command in your terminal:
+
+```bash
+curl -sL [https://github.com/ProfessorShroom/CardmarketPriceUpdater/releases/latest/download/CardmarketPriceUpdater.flatpak](https://github.com/ProfessorShroom/CardmarketPriceUpdater/releases/latest/download/CardmarketPriceUpdater.flatpak) -o CardmarketPriceUpdater.flatpak && flatpak install --user --assumeyes ./CardmarketPriceUpdater.flatpak && rm CardmarketPriceUpdater.flatpak
+```
 
 ### Project layout
 
