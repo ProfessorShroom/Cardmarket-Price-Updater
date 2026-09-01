@@ -16,7 +16,7 @@ The prices are based on an average of everything, so 1st Edition and Unlimited, 
 
 ### Platforms
 
-- **Windows** - installer/exe, same as before, still auto-updates itself.
+- **Windows** - Self-contained exe
 - **Ubuntu / Fedora** - via Flatpak
 
 ### Installation & Updating (Linux via Flatpak)
