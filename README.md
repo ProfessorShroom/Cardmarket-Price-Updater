@@ -1,4 +1,13 @@
-﻿﻿![Arch](https://img.shields.io/badge/Arch-AMD64-blue) ![OS](https://img.shields.io/badge/OS-Windows%20|%20Ubuntu%20|%20Fedora-green)
+<p align="center">
+  <img src="src/Avalonia/Assets/app-icon.png" alt="Computer Repair Centre Installer" height="300"/>
+</p>
+
+<p align="center"> 
+  <a href="https://github.com/ProfessorShroom/CardmarketPriceUpdater/releases"><img alt="Release" src="https://img.shields.io/github/v/release/ProfessorShroom/CardmarketPriceUpdater?style=for-the-badge&label=release&color=8A2BE2"></a> 
+  <img alt=".NET 8" src="https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge"> 
+  <img alt="Platforrm" src="https://img.shields.io/badge/platform-Windows%2010%2F11%20x64%20%2F%20Linux%20(Flatpak)-0078D4?style=for-the-badge&logo=windows&logoColor=white"> 
+  <a href="https://github.com/ProfessorShroom/CardmarketPriceUpdater/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-Apache-blue?style=for-the-badge"></a> 
+</p>
 
 ## Cardmarket Price Updater
 
