@@ -2,7 +2,8 @@
   <img src="src/Avalonia/Assets/app-icon.png" alt="Computer Repair Centre Installer" height="300"/>
 </p>
 
-<p align="center"> 
+<p align="center">
+  <a href="https://github.com/ProfessorShroom/CardmarketPriceUpdater/actions/workflows/build.yml"><img alt="Build" src="https://img.shields.io/github/actions/workflow/status/ProfessorShroom/CardmarketPriceUpdater/build.yml?style=for-the-badge&label=build"></a>
   <a href="https://github.com/ProfessorShroom/CardmarketPriceUpdater/releases"><img alt="Release" src="https://img.shields.io/github/v/release/ProfessorShroom/CardmarketPriceUpdater?style=for-the-badge&label=release&color=8A2BE2"></a> 
   <img alt=".NET 8" src="https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge"> 
   <img alt="Platforrm" src="https://img.shields.io/badge/platform-Windows%2010%2F11%20x64%20%2F%20Linux%20(Flatpak)-0078D4?style=for-the-badge&logo=windows&logoColor=white"> 
@@ -114,7 +115,7 @@ Run the executable from a terminal using these commands for headless use (same o
 ### Example Spreadsheet
 
 | Release Date | Game      | Set Name                           | Card Name              | Set Code   | Card Price (£) | Price Updated | Cardmarket ID | Rarity                | Own? | Edition | Bought For (£) | Collection Value (£)              | Remaning Cards | Total Cards |
-| ------------ | --------- | ---------------------------------- | ---------------------- | ---------- | -------------- | ------------- | ------------- | ---------------------- | ---- | ------- | -------------- | ---------------------------------- | -------------- | ----------- |
+| ------------ | --------- | ---------------------------------- | ---------------------- | ---------- | -------------- | ------------- | ------------- | --------------------- | ---- | ------- | -------------- | --------------------------------- | -------------- | ----------- |
 | 12/09/2025   | Yu-Gi-Oh! | Nike Collaboration Cards (special) | Red-Eyes Black Dragon  | NKC1-EN002 | £402.53        | 2026-08-26    | 845882        | Prismatic Secret Rare | ✔    | LIMITED | £200.00        | £28,799.95                        | 1              | 4           |
 | 08/03/2002   | Yu-Gi-Oh! | Legend of Blue-Eyes White Dragon   | Blue-Eyes White Dragon | LOB-001    | £467.11        | 2026-08-26    | 577919        | Ultra Rare            | ✖    | ✖       |                | Amount Spent (£)                  |                |             |
 | 05/08/1993   | MTG       | Alpha                              | Black Lotus            |            | £9,876.27      | 2026-08-26    | 5465          | Rare                  | ✔    | ✔       | £20,000.00     | £22,250.00                        |                |             |

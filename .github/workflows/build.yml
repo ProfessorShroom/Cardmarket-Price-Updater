@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore Cardmarket-Price-Updater.slnx
+
+      - name: Build
+        run: dotnet build Cardmarket-Price-Updater.slnx --no-restore --configuration Release
+
+      # No test project exists yet. Once you add one (e.g. src/Core.Tests),
+      # add it to the .slnx and uncomment the step below so it runs in CI too.
+      # - name: Test
+      #   run: dotnet test Cardmarket-Price-Updater.slnx --no-build --configuration Release --verbosity normal
